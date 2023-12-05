@@ -1,8 +1,5 @@
 export default async function getFixtures() {
   try {
-    // const requestHeaders: HeadersInit = new Headers();
-    // requestHeaders.set("Content-Type", "application/json");
-    // requestHeaders.set("apikey", process.env.SUPABASE_ANON_KEY);
 
     const requestOptions: RequestInit = {
       method: "GET",

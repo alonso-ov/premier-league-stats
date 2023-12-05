@@ -1,10 +1,10 @@
 import type { Metadata } from 'next'
-import { Lato } from 'next/font/google'
+import { Space_Grotesk } from 'next/font/google'
 import './globals.css'
 
 import TopBar from '@/app/ui/top-nav-bar'
 
-const lato = Lato({ subsets: ['latin'], weight: "400" })
+const lato = Space_Grotesk({ subsets: ['latin'], variable: '--font-space-grotesk' })
 
 export const metadata: Metadata = {
   title: 'Soccer Stats',
