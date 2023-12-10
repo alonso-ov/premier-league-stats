@@ -4,7 +4,7 @@ import WeeklyFixtures from '@/app/ui/weekly-fixtures';
 export default async function Home() {
 
   return (
-    <div className="flex w-full h-full py-8">
+    <div className="flex w-full h-full py-8 text-sm sm:text-lg">
       <WeeklyFixtures />
     </div>
   )

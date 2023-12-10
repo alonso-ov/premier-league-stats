@@ -14,7 +14,7 @@ export default function TopNavBar() {
                 alt="Soccer Stats Logo"
                 className="mr-3"
             />
-            <h2>Soccer Stats</h2>
+            <h2 className="w-max">Soccer Stats</h2>
             {/* <Link href="/">
                 <div className="flex items-center">
                     <Goal className="mr-2" />Home

@@ -1,4 +1,4 @@
-import getFixtures from '@/app/lib/data';
+import { getFixtures } from '@/app/lib/data';
 import FixtureCard from '@/app/ui/fixture-card';
 import type { FixtureCardProps } from '@/app/ui/fixture-card';
 

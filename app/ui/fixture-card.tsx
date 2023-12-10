@@ -1,6 +1,9 @@
 import Image from 'next/image';
 import clsx from 'clsx';
 
+import { getMatch } from '@/app/lib/data';
+
+
 export interface FixtureCardProps {
     fixture_id: number;
     date: string;
@@ -14,7 +17,12 @@ export interface FixtureCardProps {
 }
 
 
-export default function FixtureCard({ fixture_id, date, time, status, home, home_id, away, away_id, venue }: FixtureCardProps) {
+export default async function FixtureCard({ fixture_id, date, time, status, home, home_id, away, away_id, venue }: FixtureCardProps) {
+
+    const data = await getMatch(fixture_id);
+
+    const homeGoals = data.response[0]?.goals?.home ?? 0;
+    const awayGoals = data.response[0]?.goals?.away ?? 0;
 
     // Convert date to "<day of the week> - <month> - <day of the month>"
     const dateObj2 = new Date(date + 'T00:00');
@@ -50,8 +58,9 @@ export default function FixtureCard({ fixture_id, date, time, status, home, home
                     </div>
                 </div>
             </div>
-            <div className=''>
+            <div>
                 <p><span className={statusClasses}>{status}</span></p>
+                <p className="font-bold">{homeGoals} - {awayGoals}</p>
                 <p>{formattedDate} @ {localTimeWithZone}</p>
                 <p>{venue}</p>
             </div>
