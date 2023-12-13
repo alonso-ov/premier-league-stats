@@ -6,6 +6,7 @@ export async function getFixtures() {
         "Content-Type": "application/json",
         apikey: process.env.SUPABASE_ANON_KEY,
       },
+      cache: "no-cache",
     };
 
     const response = await fetch(
