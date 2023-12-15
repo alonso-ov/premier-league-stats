@@ -54,7 +54,7 @@ export default async function FixtureCard({ fixture_id, date, time, status, home
                 </div>
             </div>
             <div>
-                <p><span className={statusClasses}>{status}</span></p>
+                <p><span className={statusClasses}>{status == 'Not Started' ? 'Upcoming' : status}</span></p>
                 { status != 'Not Started' && <p className="font-bold">{home_score} - {away_score}</p>}
                 <p>{formattedDate} @ {localTimeWithZone}</p>
                 <p>{venue}</p>
