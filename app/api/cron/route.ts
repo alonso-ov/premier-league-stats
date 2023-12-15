@@ -84,8 +84,10 @@ export async function GET(request: NextRequest) {
           status: fixture.fixture.status.long,
           home: fixture.teams.home.name,
           home_id: fixture.teams.home.id,
+          home_score: fixture.goals.home,
           away: fixture.teams.away.name,
           away_id: fixture.teams.away.id,
+          away_score: fixture.goals.away,
           venue: fixture.fixture.venue.name,
         },
       ]);
