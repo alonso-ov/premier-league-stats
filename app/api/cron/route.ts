@@ -35,6 +35,15 @@ export async function GET(request: NextRequest) {
   const weekStart = formatDate(new Date(sunday));
   const weekEnd = formatDate(new Date(saturday));
 
+  const currentYear = new Date().getFullYear();
+
+  let seasonYear = currentYear;
+
+  // if the current month is less than 7 (July) then the season started last year
+  if (now.getMonth() < 7) {
+    seasonYear = now.getFullYear() - 1;
+  }
+
   //get most recent data from foot api
   const options = {
     method: "GET",
@@ -44,7 +53,7 @@ export async function GET(request: NextRequest) {
       timezone: "America/Los_Angeles",
       from: weekStart,
       to: weekEnd,
-      season: now.getFullYear().toString(),
+      season: seasonYear, // This year is always the year that the season starts (e.g 2020-2021 season is 2020)
     },
     headers: {
       "x-rapidapi-key": process.env.RAPID_API_KEY,
@@ -64,7 +73,7 @@ export async function GET(request: NextRequest) {
     //delete all current information
     const { data, error } = await supabase.from("fixtures").delete().neq("id", 0);
 
-    if (error) console.error("Error deleting data: ", error);
+    if (error) throw error;
 
 
     fixturesArr.forEach(async (fixture: any) => {
@@ -92,7 +101,7 @@ export async function GET(request: NextRequest) {
         },
       ]);
 
-      if (error) console.error("Error inserting data: ", error);
+      if (error) throw error;
 
     });
   } catch (error) {
