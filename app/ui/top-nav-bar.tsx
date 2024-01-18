@@ -15,16 +15,6 @@ export default function TopNavBar() {
                 className="mr-3"
             />
             <h2 className="w-max">Soccer Stats</h2>
-            {/* <Link href="/">
-                <div className="flex items-center">
-                    <Goal className="mr-2" />Home
-                </div>
-            </Link> */}
-            {/* <Link href="/statistics">
-                <div className="flex items-center">
-                    <BarChart2 className="mr-2" />Statistics
-                </div>
-            </Link> */}
         </nav>
     );
 };

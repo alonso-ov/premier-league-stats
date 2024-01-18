@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { Space_Grotesk } from 'next/font/google'
 import './globals.css'
 
-import TopBar from '@/app/ui/top-nav-bar'
+import TopNavBar from '@/app/ui/top-nav-bar'
 
 const lato = Space_Grotesk({ subsets: ['latin'], variable: '--font-space-grotesk' })
 
@@ -19,7 +19,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`flex flex-col w-screen h-screen ${lato.className}`}>
-        <TopBar />
+        <TopNavBar />
         <div>
           {children}
         </div>
