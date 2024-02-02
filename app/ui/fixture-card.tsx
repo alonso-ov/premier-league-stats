@@ -19,14 +19,15 @@ export interface FixtureCardProps {
 
 export default async function FixtureCard({ fixture_id, date, time, status, home, home_id, home_score, away, away_id, away_score, venue }: FixtureCardProps) {
 
-    // Convert date to "<day of the week> - <month> - <day of the month>"
-    const dateObj2 = new Date(date + 'T00:00');
-    const formattedDate = dateObj2.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+    const dateObj = new Date(date);
 
-    // Convert London time to local time
-    const dateObj = new Date(`1970-01-01T${time}.000Z`);
-    const formatter = new Intl.DateTimeFormat([], { hour: '2-digit', minute: '2-digit', hour12: true, timeZoneName: 'short' });
-    const localTimeWithZone = formatter.format(dateObj);
+    // Format the date as mm/dd/yy
+    const formattedDate = `${dateObj.getMonth() + 1}/${dateObj.getDate()}`;
+
+    // Format the time as hh:mm
+    const formattedTime = dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+    const timeZoneAbbr = dateObj.toLocaleTimeString('en-us', {timeZoneName: 'short'}).split(' ')[2];
 
     const statusClasses = clsx(
         'font-bold',
@@ -55,8 +56,8 @@ export default async function FixtureCard({ fixture_id, date, time, status, home
             </div>
             <div>
                 <p><span className={statusClasses}>{status == 'Not Started' ? 'Upcoming' : status}</span></p>
-                { status != 'Not Started' && <p className="font-bold">{home_score} - {away_score}</p>}
-                <p>{formattedDate} @ {localTimeWithZone}</p>
+                {status != 'Not Started' && <p className="font-bold">{home_score} - {away_score}</p>}
+                <p>{formattedDate} @ {formattedTime} {timeZoneAbbr}</p>
                 <p>{venue}</p>
             </div>
             <div>
