@@ -1,42 +1,83 @@
 import { Client } from "pg";
 import { promises as fs } from "fs";
+import {
+  SecretsManagerClient,
+  GetSecretValueCommand,
+} from "@aws-sdk/client-secrets-manager";
 
-export async function getFixtures() {
+const SECRET_NAME = "soccer-stats-auth";
+const CERT_FILE_PATH = process.cwd() + "/certification/global-bundle.pem";
+
+async function fetchSecret() {
   try {
-    const caCert = await fs.readFile(
-      process.cwd() + "/certification/global-bundle.pem",
-      "utf8",
+    const secretsClient = new SecretsManagerClient({
+      region: "us-east-1",
+      credentials: {
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID || "",
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || "",
+      },
+    });
+
+    const response = await secretsClient.send(
+      new GetSecretValueCommand({
+        SecretId: SECRET_NAME,
+        VersionStage: "AWSCURRENT",
+      })
     );
 
-    //create client, by default, SSL is enabled
-    const client = await new Client({
-      host: process.env.DB_HOST,
-      port: process.env.DB_PORT,
-      user: process.env.DB_USER,
-      password: process.env.DB_PASSWORD,
-      database: process.env.DB_NAME,
+    const secretString = response.SecretString || "";
+    return JSON.parse(secretString);
+  } catch (error) {
+    console.error("fetchSecret error: ", error);
+    throw new Error("Failed to fetch secret from AWS Secrets Manager");
+  }
+}
+
+interface secretsObjectType {
+  host: string,
+  port: string,
+  username: string,
+  password: string
+}
+
+
+async function connectToDatabase(secretObj: secretsObjectType) {
+  try {
+    const caCert = await fs.readFile(CERT_FILE_PATH, "utf8");
+
+    const client = new Client({
+      host: secretObj.host,
+      port: secretObj.port,
+      user: secretObj.username,
+      password: secretObj.password,
+      database: "postgres",
       ssl: {
         sslmode: "require",
         ca: caCert,
       },
     });
 
-    // Connect to the database
     await client.connect();
+    return client;
+  } catch (error) {
+    console.error("connectToDatabase error: ", error);
+    throw new Error("Failed to connect to the database");
+  }
+}
 
-    // Execute a query to retrieve data from the fixtures table
+export async function getFixtures() {
+  try {
+    const secretObj = await fetchSecret();
+    const client = await connectToDatabase(secretObj);
+
     const result = await client.query("SELECT * FROM public.fixtures");
-
-    // Retrieve the data from the result
     const fixturesData = result.rows;
 
-    // Close the database connection
     await client.end();
 
     return fixturesData;
   } catch (error) {
     console.error("getFixtures error: ", error);
-
     throw new Error("Failed to get fixtures from Supabase");
   }
 }
