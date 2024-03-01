@@ -68,6 +68,7 @@ export async function GET(request: NextRequest) {
     const response = await axios.request(options);
     const fixturesArr = response.data.response;
 
+    // retrieve the SSL certificate
     const caCert = await fs.readFile(
       process.cwd() + "/certification/global-bundle.pem",
       "utf8",
@@ -86,14 +87,7 @@ export async function GET(request: NextRequest) {
       },
     });
 
-    console.log("attemping to connect to the database");
-
-    await client
-      .connect()
-      .then(() => console.log("Connected to the database"))
-      .catch((error: any) =>
-        console.error("Error connecting to the database", error),
-      );
+    await client.connect();
 
     // Delete all rows from the 'fixtures' table
     const deleteQuery = "DELETE FROM fixtures";
