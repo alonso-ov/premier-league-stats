@@ -11,16 +11,16 @@ export async function GET(request: NextRequest) {
   //TODO: uncomment request authorization in production
 
   // Check if the request is authorized
-  // if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-  //   return NextResponse.json(
-  //     {
-  //       message: "Unauthorized",
-  //     },
-  //     {
-  //       status: 401,
-  //     },
-  //   );
-  // }
+  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+    return NextResponse.json(
+      {
+        message: "Unauthorized",
+      },
+      {
+        status: 401,
+      },
+    );
+  }
 
   const now = new Date();
   const today = now.getDay();
