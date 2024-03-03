@@ -1,4 +1,4 @@
-import { connectToDatabase } from "./db";
+import { connectToDatabase } from "@/app/lib/db";
 
 export async function getFixtures() {
   try {
