@@ -1,17 +1,56 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import axios from "axios";
-import { Client } from "pg";
 import { promises as fs } from "fs";
 import { connectToDatabase } from "@/app/lib/db";
+import jwt from "jsonwebtoken";
+import {
+  SecretsManagerClient,
+  GetSecretValueCommand,
+} from "@aws-sdk/client-secrets-manager";
+
+async function verifyToken(token: string) {
+
+  const SECRET_NAME = "soccer-stats-apiKey";
+
+  const secretsClient = new SecretsManagerClient({
+    region: "us-east-1",
+    credentials: {
+      accessKeyId: process.env.AWS_ACCESS_KEY_ID || "",
+      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || "",
+    },
+  });
+
+  const response = await secretsClient.send(
+    new GetSecretValueCommand({
+      SecretId: SECRET_NAME,
+      VersionStage: "AWSCURRENT",
+    })
+  );
+
+  const secretString = response.SecretString || "";
+  const secretObj = JSON.parse(secretString);
+  const secretKey = secretObj.secretKey;
+
+  return new Promise((resolve, reject) => {
+    jwt.verify(token, secretKey, (err: any) => {
+      if (err) {
+        reject(err);
+      }
+
+      resolve(null)
+    });
+  });
+}
 
 export async function GET(request: NextRequest) {
-  const authHeader = request.headers.get("authorization");
 
-  //TODO: uncomment request authorization in production
+  const authorization = request.headers.get("authorization") || "";
+  const token = authorization.split(" ")[1]; // Formatted "Bearer <token>"
 
-  // Check if the request is authorized
-  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+  try{
+    await verifyToken(token);
+  } catch(error) {
     return NextResponse.json(
       {
         message: "Unauthorized",
