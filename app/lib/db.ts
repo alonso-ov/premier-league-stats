@@ -5,7 +5,7 @@ import {
   GetSecretValueCommand,
 } from "@aws-sdk/client-secrets-manager";
 
-const SECRET_NAME = "soccer-stats-auth";
+const SECRET_NAME = "soccer-stats-db-readonly";
 const CERT_FILE_PATH = process.cwd() + "/certification/global-bundle.pem";
 
 export async function fetchSecret() {
