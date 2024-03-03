@@ -3,6 +3,7 @@ import type { NextRequest } from "next/server";
 import axios from "axios";
 import { Client } from "pg";
 import { promises as fs } from "fs";
+import { connectToDatabase } from "@/app/lib/db";
 
 export async function GET(request: NextRequest) {
   const authHeader = request.headers.get("authorization");
@@ -75,19 +76,7 @@ export async function GET(request: NextRequest) {
     );
 
     //create client, by default, SSL is enabled
-    const client = await new Client({
-      host: process.env.DB_HOST,
-      port: process.env.DB_PORT,
-      user: process.env.DB_USER,
-      password: process.env.DB_PASSWORD,
-      database: process.env.DB_NAME,
-      ssl: {
-        sslmode: "require",
-        ca: caCert,
-      },
-    });
-
-    await client.connect();
+    const client = await connectToDatabase();
 
     // Delete all rows from the 'fixtures' table
     const deleteQuery = "DELETE FROM fixtures";
